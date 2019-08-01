@@ -10,26 +10,44 @@ import React, { Component } from 'react';
 import { Text, View, FlatList, Image, StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
-  movieCell: {
-    paddingTop: 10
+  listItem: {
+    padding: 10
+  },
+  listContainer: {
+    flex: 1,
+    flexDirection: "row"
+  },
+  listSeparator: {
+    height: 1,
+    opacity: 0.6,
+    backgroundColor: "gray",
+  },
+  movieInfo: {
+    flex: 1,
+    justifyContent: "center",
+    marginLeft: 10
   },
   movieTitle: {
     fontSize: 17,
     fontWeight: "bold"
   },
-  movieInfo: {
+  movieSubtitle: {
     fontSize: 12,
     color: "gray"
   }
 });
 
-class Cell extends Component {
+class ListItem extends Component {
   render() {
     return (
-        <View style={styles.movieCell}>
-          <Image source={this.props.movie.image} style={{width: 50, height: 50}}/>
-          <Text style={styles.movieTitle}>{this.props.movie.title}</Text>
-          <Text style={styles.movieInfo}>{this.props.movie.year}</Text>
+        <View style={styles.listItem}>
+          <View style={styles.listContainer}>
+            <Image source={this.props.movie.image} style={{width: 50, height: 50}}/>
+            <View style={styles.movieInfo}>
+              <Text style={styles.movieTitle}>{this.props.movie.title}</Text>
+              <Text style={styles.movieSubtitle}>{this.props.movie.year}</Text>
+            </View>
+          </View>
         </View>
     )
   }
@@ -56,12 +74,19 @@ export default class App extends Component {
     ]
   };
 
+  renderSeparator = () => {
+    return (
+        <View style={styles.listSeparator} />
+    );
+  };
+
   render() {
     return (
         <View style={{flex: 1}}>
           <FlatList
               data={this.state.movies}
-              renderItem={({item}) => <Cell movie={item} />}
+              renderItem={({item}) => <ListItem movie={item} />}
+              ItemSeparatorComponent={this.renderSeparator}
           />
         </View>
     );
