@@ -8,6 +8,7 @@
 
 import React, { Component } from 'react';
 import { Text, View, FlatList, Image, StyleSheet } from 'react-native';
+import { electrodeBridge } from "react-native-electrode-bridge";
 
 const styles = StyleSheet.create({
   listItem: {
@@ -54,6 +55,22 @@ class ListItem extends Component {
 }
 
 export default class App extends Component {
+  componentDidMount() {
+    electrodeBridge
+        .sendRequest("br.com.foo",
+            {
+              data: {
+                some: "hey"
+              },
+              timeout: 5000
+            }).then(response => {
+              this.setState(previousState => (
+                  {movies: response}
+              ))
+    })
+  }
+  
+
   state = {
     movies: [
       {
