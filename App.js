@@ -7,9 +7,8 @@
  */
 
 import React, { Component } from 'react';
-import { Text, View, FlatList, Image, StyleSheet } from 'react-native';
+import { Text, View, FlatList, Image, StyleSheet, YellowBox, TouchableHighlight } from 'react-native';
 import { electrodeBridge } from "react-native-electrode-bridge";
-import { YellowBox } from 'react-native'
 
 // Internal weird warning from Electrode
 YellowBox.ignoreWarnings([
@@ -45,17 +44,23 @@ const styles = StyleSheet.create({
 });
 
 class ListItem extends Component {
+  _onPress = () => {
+    this.props.onPressItem(this.props.movie.id);
+  };
+
   render() {
     return (
-        <View style={styles.listItem}>
-          <View style={styles.listContainer}>
-            <Image source={this.props.movie.image} style={{width: 50, height: 50}}/>
-            <View style={styles.movieInfo}>
-              <Text style={styles.movieTitle}>{this.props.movie.title}</Text>
-              <Text style={styles.movieSubtitle}>{this.props.movie.releaseDate}</Text>
+        <TouchableHighlight onPress={this._onPress} underlayColor={"rgba(1,1,1,0.2)"} >
+          <View style={styles.listItem}>
+            <View style={styles.listContainer}>
+              <Image source={this.props.movie.image} style={{width: 50, height: 50}}/>
+              <View style={styles.movieInfo}>
+                <Text style={styles.movieTitle}>{this.props.movie.title}</Text>
+                <Text style={styles.movieSubtitle}>{this.props.movie.releaseDate}</Text>
+              </View>
             </View>
           </View>
-        </View>
+        </TouchableHighlight>
     )
   }
 }
@@ -121,7 +126,11 @@ export default class App extends Component {
     );
   };
 
-  _keyExtractor = (item, index) => "" + item.id;
+  _keyExtractor = (item, _) => item.id.toString();
+
+  _onPressItem = id => {
+    console.log("***** Pressed: " + id);
+  };
 
   render() {
     return (
@@ -129,7 +138,7 @@ export default class App extends Component {
           <FlatList
               data={this.state.movies}
               keyExtractor={this._keyExtractor}
-              renderItem={({item}) => <ListItem movie={item} />}
+              renderItem={({item}) => <ListItem movie={item} onPressItem={this._onPressItem} />}
               ItemSeparatorComponent={this._itemSeparator}
           />
         </View>
