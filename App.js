@@ -120,6 +120,13 @@ export default class App extends Component {
     });
   }
 
+  didSelectMovie = id => {
+    let data = {
+      data: {movieID: id}
+    };
+    electrodeBridge.emitEvent("MovieListMiniApp:didSelectMovie", data);
+  };
+
   _itemSeparator = () => {
     return (
         <View style={styles.listSeparator} />
@@ -128,17 +135,13 @@ export default class App extends Component {
 
   _keyExtractor = (item, _) => item.id.toString();
 
-  _onPressItem = id => {
-    console.log("***** Pressed: " + id);
-  };
-
   render() {
     return (
         <View style={{flex: 1}}>
           <FlatList
               data={this.state.movies}
               keyExtractor={this._keyExtractor}
-              renderItem={({item}) => <ListItem movie={item} onPressItem={this._onPressItem} />}
+              renderItem={({item}) => <ListItem movie={item} onPressItem={this.didSelectMovie} />}
               ItemSeparatorComponent={this._itemSeparator}
           />
         </View>
