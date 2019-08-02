@@ -38,6 +38,20 @@
     self.rnView.frame = [UIScreen mainScreen].bounds;
     [self.view addSubview:self.rnView];
     [self.view layoutIfNeeded];
+  
+  [ElectrodeBridgeHolder registerRequestHandlerWithName:@"br.com.foo" requestCompletionHandler:^(id  _Nullable data, ElectrodeBridgeResponseCompletionHandler  _Nonnull block) {
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+      NSArray *arr = @[@{
+                         @"id": @"3",
+                         @"title": @"Spider Man: Far From Home",
+                         @"year": @"2019",
+                         @"image": @{
+                             @"uri": @"https://image.tmdb.org/t/p/w1280/rjbNpRMoVvqHmhmksbokcyCr7wn.jpg"
+                             }
+                         }];
+      block(arr, nil);
+    });
+  }];
 }
 
 - (void) viewDidLayoutSubviews {

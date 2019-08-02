@@ -24,5 +24,5 @@
 
 NSString *const MainMiniAppName = @"MovieListMiniApp";
 BOOL const RnDevSupportEnabled = YES;
-NSString *const PackagerHost = @"192.168.42.72";
+NSString *const PackagerHost = @"192.168.169.104";
 NSString *const PackagerPort = @"8081";
