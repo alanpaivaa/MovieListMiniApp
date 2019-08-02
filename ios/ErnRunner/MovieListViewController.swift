@@ -33,6 +33,10 @@ class MovieListViewController: UIViewController {
       .registerRequestHandler(withName: "MovieListMiniApp:getMovies",
                               requestCompletionHandler: getMovies(requestData:handler:))
     
+    ElectrodeBridgeHolder
+      .addEventListener(withName: "MovieListMiniApp:didSelectMovie",
+                        eventListner: handleDidSelectMovieEvent(data:))
+    
   }
   
   private func getMovies(requestData: Any?, handler: ElectrodeBridgeResponseCompletionHandler) {
@@ -48,6 +52,29 @@ class MovieListViewController: UIViewController {
     let movies = Array(store.movies[offset..<(offset+limit)])
     
     handler(movies, nil)
+  }
+  
+  private func handleDidSelectMovieEvent(data: Any?) {
+    guard
+      let dict = data as? [String: Any],
+      let movieID = dict["movieID"] as? Int else {
+        print("Could not find movie id")
+        return
+    }
+    
+    let store = MovieStore.shared
+    guard let movie = store.movies.first(where: { $0.id == movieID }) else {
+      print("Movie not found")
+      return
+    }
+    
+    let alert = UIAlertController(
+      title: "Movie #\(movie.id)",
+      message: movie.title,
+      preferredStyle: .alert
+    )
+    alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+    present(alert, animated: true, completion: nil)
   }
   
   deinit {
