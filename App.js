@@ -9,6 +9,12 @@
 import React, { Component } from 'react';
 import { Text, View, FlatList, Image, StyleSheet } from 'react-native';
 import { electrodeBridge } from "react-native-electrode-bridge";
+import { YellowBox } from 'react-native'
+
+// Internal weird warning from Electrode
+YellowBox.ignoreWarnings([
+  'Module ElectrodeBridgeTransceiver requires main queue',
+]);
 
 const styles = StyleSheet.create({
   listItem: {
@@ -109,19 +115,22 @@ export default class App extends Component {
     });
   }
 
-  renderSeparator = () => {
+  _itemSeparator = () => {
     return (
         <View style={styles.listSeparator} />
     );
   };
+
+  _keyExtractor = (item, index) => "" + item.id;
 
   render() {
     return (
         <View style={{flex: 1}}>
           <FlatList
               data={this.state.movies}
+              keyExtractor={this._keyExtractor}
               renderItem={({item}) => <ListItem movie={item} />}
-              ItemSeparatorComponent={this.renderSeparator}
+              ItemSeparatorComponent={this._itemSeparator}
           />
         </View>
     );
