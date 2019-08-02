@@ -46,7 +46,7 @@ class ListItem extends Component {
             <Image source={this.props.movie.image} style={{width: 50, height: 50}}/>
             <View style={styles.movieInfo}>
               <Text style={styles.movieTitle}>{this.props.movie.title}</Text>
-              <Text style={styles.movieSubtitle}>{this.props.movie.year}</Text>
+              <Text style={styles.movieSubtitle}>{this.props.movie.releaseDate}</Text>
             </View>
           </View>
         </View>
@@ -55,41 +55,59 @@ class ListItem extends Component {
 }
 
 export default class App extends Component {
-  componentDidMount() {
-    electrodeBridge
-        .sendRequest("br.com.foo",
-            {
-              data: {
-                some: "hey"
-              },
-              timeout: 5000
-            }).then(response => {
-              this.setState(previousState => (
-                  {movies: response}
-              ))
-    })
-  }
-  
+  constructor() {
+    super();
 
-  state = {
-    movies: [
-      {
-        id: 1,
-        title: "The Lion King",
-        year: 2019,
+    // Initializing vars
+    this.getMoviesRequestUUID = null;
+    this.state = {
+      movies: []
+    };
+  }
+
+  componentDidMount() {
+    this.requestMovies(0, 3);
+  }
+
+  componentWillUnmount() {
+    electrodeBridge.removeEventListener(this.getMoviesRequestUUID);
+  }
+
+  requestMovies(offset, limit) {
+    let requestParams = {
+      data: {
+        offset: offset,
+        limit: limit
+      },
+      timeout: 60000 // 1 minute
+    };
+
+    this.getMoviesRequestUUID = electrodeBridge
+        .sendRequest("MovieListMiniApp:getMovies", requestParams)
+        .then(data => {
+          this.didGetMovies(data);
+        });
+  }
+
+  didGetMovies(data) {
+    let movies = data.map(elem => {
+      return {
+        id: elem.id,
+        title: elem.title,
+        releaseDate: elem.releaseDate,
+        genres: elem.genres,
         image: {
-          uri: "https://pbs.twimg.com/profile_images/1134173490620354561/V9Au2vRZ_400x400.jpg"
-        }
-      }, {
-        id: 2,
-        title: "The Avengers - Endgame",
-        year: 2019,
-        image: {
-          uri: "https://images-na.ssl-images-amazon.com/images/I/91epzdXTTHL._SX300_.jpg"
+          uri: elem.imageURL
         }
       }
-    ]
-  };
+    });
+
+    this.setState(previousState => {
+      let newState = previousState;
+      newState.movies = movies;
+      return newState
+    });
+  }
 
   renderSeparator = () => {
     return (
